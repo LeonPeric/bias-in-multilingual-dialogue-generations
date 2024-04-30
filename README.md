@@ -15,4 +15,4 @@ Save target messages to 'messages.pkl'
 
 'run.py' - transferred the code from 'main.ipynb' to .py format to enable the generation in Snellius
 
-'run.job' - execure this file to run 'run.py' with GPU
+'main.job' - execure this file to run 'run.py' with GPU
