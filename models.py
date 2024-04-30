@@ -27,7 +27,10 @@ class Model:
         if self.model_name == "MT5":
             self.model_id = "google/mt5-large"
 
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_id)
+        if self.model_name == "Mixtral":
+            self.model_id = "mistral-community/Mixtral-8x22B-v0.1"
+
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_id, use_auth_token=True)
         if self.model_name == "LLama":
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.model_id, torch_dtype=torch.bfloat16, device_map="auto"
@@ -36,6 +39,12 @@ class Model:
             self.model = MT5ForConditionalGeneration.from_pretrained(
                 self.model_id, torch_dtype=torch.bfloat16, device_map="auto"
             )
+
+        if self.model_name == "Mixtral":
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_id, torch_dtype=torch.bfloat16, device_map="auto"
+            )        
+
 
         self.terminators = [
             self.tokenizer.eos_token_id,
