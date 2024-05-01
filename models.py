@@ -1,4 +1,4 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM, MT5ForConditionalGeneration
+from transformers import AutoTokenizer, AutoModelForCausalLM, MT5ForConditionalGeneration, AutoModelForSeq2SeqLM
 import torch
 
 
@@ -23,27 +23,21 @@ class Model:
 
         if self.model_name == "LLama":
             self.model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
-
-        if self.model_name == "MT5":
-            self.model_id = "google/mt5-large"
-
-        if self.model_name == "Mixtral":
-            self.model_id = "mistral-community/Mixtral-8x22B-v0.1"
-
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_id, use_auth_token=True)
-        if self.model_name == "LLama":
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id, torch_dtype=torch.bfloat16, device_map="auto"
-            )
-        if self.model_name == "MT5":
-            self.model = MT5ForConditionalGeneration.from_pretrained(
-                self.model_id, torch_dtype=torch.bfloat16, device_map="auto"
+                self.model_id,  device_map="auto", token="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"
             )
 
-        if self.model_name == "Mixtral":
+        if self.model_name == "Mistral":
+            self.model_id = "mistralai/Mistral-7B-Instruct-v0.2"
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id, torch_dtype=torch.bfloat16, device_map="auto"
-            )        
+                self.model_id, device_map="auto", token="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"
+            )   
+
+        if self.model_name == "Aya":
+            self.model_id = "CohereForAI/aya-101"
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model_id, device_map="auto")
+
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_id, token="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")   
 
 
         self.terminators = [
