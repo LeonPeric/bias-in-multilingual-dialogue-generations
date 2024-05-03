@@ -64,18 +64,29 @@ if False: # Gives error if two sentences are translated to the same
     with open(os.path.join(target_path,'sentence_templates.json'), 'w', encoding='utf-8') as file:
             json.dump(sentence_templates, file, indent=4)
 
-if True: # Also translates {noun} and {article} placeholders, which will raise issues
+def Placeholder(input, direction): # Replaces program's tags with placeholders or reverts them
+    if direction == 'placeholder':
+        input = input.replace('{article}', '🙂')
+        input = input.replace('{noun}', '🤩')
+    if direction == 'original':
+        input = input.replace('🙂', '{article}')
+        input = input.replace('🤩', '{noun}')
+    return input
+
+if True:
     with open(os.path.join(path,version,'standalone_noun_phrases.json'), 'r', encoding='utf-8') as file:
         nps = json.load(file)
         for cat in nps:
-            for i in range(len(nps[cat])): # List of words, but might also be dictionaries
-                word = nps[cat][i]
-                if isinstance(word, dict):
-                    nps[cat][i]['noun_phrase'] = Translate(word['noun_phrase'], translator, target_lang)
-                    if 'plural_noun_phrase' in word:
-                        nps[cat][i]['plural_noun_phrase'] = Translate(word['plural_noun_phrase'], translator, target_lang)
+            for i in range(len(nps[cat])): # List of nps, but might also be dictionaries
+                np = nps[cat][i]
+                if isinstance(np, dict):
+                    sg = Placeholder(np['noun_phrase'], 'placeholder')
+                    nps[cat][i]['noun_phrase'] = Placeholder(Translate(sg, translator, target_lang), 'original')
+                    if 'plural_noun_phrase' in np:
+                        pl = Placeholder(np['plural_noun_phrase'], 'placeholder')
+                        nps[cat][i]['plural_noun_phrase'] = Placeholder(Translate(pl, translator, target_lang), 'original')
                 else:
-                    nps[cat][i] = Translate(word, translator, target_lang)
+                    nps[cat][i] = Placeholder(Translate(Placeholder(np, 'placeholder'), translator, target_lang), 'original')
 
     with open(os.path.join(target_path,'stand_alone_noun_phrases.json'), 'w', encoding='utf-8') as file:
         json.dump(nps, file, indent=4)
