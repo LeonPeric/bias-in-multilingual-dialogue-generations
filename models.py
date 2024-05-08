@@ -1,5 +1,8 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM, MT5ForConditionalGeneration, AutoModelForSeq2SeqLM
-import torch
+from transformers import (
+    AutoTokenizer,
+    AutoModelForCausalLM,
+    AutoModelForSeq2SeqLM,
+)
 
 
 class Model:
@@ -24,49 +27,44 @@ class Model:
         if self.model_name == "LLama":
             self.model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id,  device_map="auto", token="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"
+                self.model_id, device_map="auto", use_auth_token=True
             )
 
         if self.model_name == "Mistral":
             self.model_id = "mistralai/Mistral-7B-Instruct-v0.2"
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id, device_map="auto", token="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"
-            )   
+                self.model_id, device_map="auto", use_auth_token=True
+            )
 
         if self.model_name == "Aya":
             self.model_id = "CohereForAI/aya-101"
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model_id, device_map="auto")
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(
+                self.model_id, device_map="auto", use_auth_token=True
+            )
 
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_id, token="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")   
-
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.model_id, padding_side="left", use_auth_token=True
+        )
 
         self.terminators = [
             self.tokenizer.eos_token_id,
             self.tokenizer.convert_tokens_to_ids("<|eot_id|>"),
         ]
 
-        self.tokenizer.add_special_tokens({"pad_token": "<pad>"})
+        self.tokenizer.pad_token = self.tokenizer.eos_token
 
-    def prepare_input(self, messages: list) -> list:
+    def prepare_input(self, messages) -> list:
         """
         Function for tokenizing batched input, expects the following format:
 
         """
         input_ids = []
 
-        # quite a large difference in generation when using chat template
-        # also big difference in inference time (chat is 3x faster)
-        # however it is easier and more universal across models wrt template design
-        # for message in messages:
-        #     message_ids = self.tokenizer.apply_chat_template(
-        #         message, add_generation_prompt=True, return_tensors="pt", padding=True
-        #     )
-        #     input_ids.append(message_ids)
-        # input_ids = torch.stack(input_ids, dim=0).squeeze().to(self.model.device)
-        input_ids = self.tokenizer(messages, padding=True, return_tensors="pt").to(self.model.device)
-        
+        input_ids = self.tokenizer.apply_chat_template(
+            messages, add_generation_prompt=True, return_tensors="pt", padding=True
+        ).to("cuda")
 
-        return input_ids["input_ids"]
+        return input_ids
 
     def generate(self, input_ids) -> list:
         """
@@ -76,24 +74,19 @@ class Model:
             input_ids,
             max_new_tokens=self.max_new_tokens,
             eos_token_id=self.terminators,
-            do_sample=True,
-            temperature=self.temperature,
+            pad_token_id=self.tokenizer.eos_token_id,
+            do_sample=False,  # this has to be false when temperature is 0 right?
+            # temperature=self.temperature,
             num_return_sequences=self.sequences_amount,
         )
 
         results = []
-        for i in range(self.batch_size):
-            query_results = []
-            for item in outputs[
-                i * self.sequences_amount : (i + 1) * self.sequences_amount
-            ]:
-                query_results.append(
-                    self.tokenizer.decode(
-                        #item[input_ids.shape[-1] :], skip_special_tokens=True
-                        item, skip_special_tokens=True
-                    )
+        for item in outputs:
+            results.append(
+                self.tokenizer.decode(
+                    item[input_ids.shape[-1] :],
+                    skip_special_tokens=True,
                 )
-
-            results.append(query_results)
+            )
 
         return results

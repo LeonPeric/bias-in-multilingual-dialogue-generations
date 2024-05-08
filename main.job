@@ -19,10 +19,10 @@ cd $HOME/bias-in-multilingual-dialogue-generations/
 # Activate your environment
 source activate dl1
 
-model_name='MT5'
+model_name='LLama3'
 max_new_tokens=512
-temperature=1
-sequences_amount=2
+temperature=0.0
+sequences_amount=1
 batch_size=2
 
 python run.py \
