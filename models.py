@@ -24,26 +24,28 @@ class Model:
         self.sequences_amount = sequences_amount
         self.batch_size = batch_size
 
+        token = "SECRET"
+
         if self.model_name == "LLama":
             self.model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id, device_map="auto", use_auth_token=True
+                self.model_id, device_map="auto", token=token
             )
 
         if self.model_name == "Mistral":
             self.model_id = "mistralai/Mistral-7B-Instruct-v0.2"
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id, device_map="auto", use_auth_token=True
+                self.model_id, device_map="auto", token=token
             )
 
         if self.model_name == "Aya":
             self.model_id = "CohereForAI/aya-101"
             self.model = AutoModelForSeq2SeqLM.from_pretrained(
-                self.model_id, device_map="auto", use_auth_token=True
+                self.model_id, device_map="auto", token=token
             )
 
         self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_id, padding_side="left", use_auth_token=True
+            self.model_id, padding_side="left", token=token
         )
 
         self.terminators = [
@@ -84,7 +86,7 @@ class Model:
         for item in outputs:
             results.append(
                 self.tokenizer.decode(
-                    item[input_ids.shape[-1] :],
+                    item if self.model_name == "Aya" else item[input_ids.shape[-1] :],
                     skip_special_tokens=True,
                 )
             )
