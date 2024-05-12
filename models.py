@@ -29,23 +29,23 @@ class Model:
         if self.model_name == "LLama":
             self.model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id, device_map="auto", token=token
+                self.model_id, device_map="auto", token=token, cache_dir="$TMPDIR"
             )
 
         if self.model_name == "Mistral":
             self.model_id = "mistralai/Mistral-7B-Instruct-v0.2"
             self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id, device_map="auto", token=token
+                self.model_id, device_map="auto", token=token, cache_dir="$TMPDIR"
             )
 
         if self.model_name == "Aya":
             self.model_id = "CohereForAI/aya-101"
             self.model = AutoModelForSeq2SeqLM.from_pretrained(
-                self.model_id, device_map="auto", token=token
+                self.model_id, device_map="auto", token=token, cache_dir="$TMPDIR"
             )
 
         self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_id, padding_side="left", token=token
+            self.model_id, padding_side="left", token=token, cache_dir="$TMPDIR"
         )
 
         self.terminators = [

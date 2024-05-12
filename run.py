@@ -8,7 +8,7 @@ def main(model_name, max_new_tokens, temperature, sequences_amount, batch_size):
     input_ids = model.prepare_input(messages)
     results = model.generate(input_ids)
 
-    file_name = f"out/results_{model_name}.pkl"
+    file_name = f"out/results_{model_name}_Dutch.pkl"
     with open(file_name, "wb") as f:
         pickle.dump(results, f)
 
@@ -17,7 +17,7 @@ def main(model_name, max_new_tokens, temperature, sequences_amount, batch_size):
 
 if __name__ == "__main__":
     # load messages
-    with open("messages.pkl", "rb") as f:
+    with open("messages_Dutch.pkl", "rb") as f:
         messages = pickle.load(f)
 
     # add args
