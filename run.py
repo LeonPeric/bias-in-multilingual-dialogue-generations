@@ -3,12 +3,17 @@ import pickle
 import argparse
 
 
-def main(model_name, max_new_tokens, temperature, sequences_amount, batch_size):
+def main(
+    model_name, max_new_tokens, temperature, sequences_amount, batch_size, language
+):
+    with open("messages_Dutch.pkl", "rb") as f:
+        messages = pickle.load(f)
+
     model = Model(model_name, max_new_tokens, temperature, sequences_amount, batch_size)
     input_ids = model.prepare_input(messages)
     results = model.generate(input_ids)
 
-    file_name = f"out/results_{model_name}_Dutch.pkl"
+    file_name = f"out/results_{model_name}_{language}.pkl"
     with open(file_name, "wb") as f:
         pickle.dump(results, f)
 
@@ -16,9 +21,6 @@ def main(model_name, max_new_tokens, temperature, sequences_amount, batch_size):
 
 
 if __name__ == "__main__":
-    # load messages
-    with open("messages_Dutch.pkl", "rb") as f:
-        messages = pickle.load(f)
 
     # add args
     parser = argparse.ArgumentParser()
@@ -36,6 +38,7 @@ if __name__ == "__main__":
         "--sequences_amount", default=1, type=int, help="sequences_amount"
     )
     parser.add_argument("--batch_size", default=2, type=int, help="batch_size")
+    parser.add_argument("--language", default="English", type=str, help="Language")
 
     args = parser.parse_args()
     kwargs = vars(args)

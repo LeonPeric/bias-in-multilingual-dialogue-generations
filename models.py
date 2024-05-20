@@ -2,7 +2,10 @@ from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
     AutoModelForSeq2SeqLM,
+    pipeline,
 )
+
+from tqdm import tqdm
 
 
 class Model:
@@ -28,43 +31,53 @@ class Model:
 
         if self.model_name == "LLama":
             self.model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
-            self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id, device_map="auto", token=token, cache_dir="$TMPDIR"
-            )
 
         if self.model_name == "Mistral":
             self.model_id = "mistralai/Mistral-7B-Instruct-v0.2"
-            self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_id, device_map="auto", token=token, cache_dir="$TMPDIR"
-            )
 
         if self.model_name == "Aya":
             self.model_id = "CohereForAI/aya-101"
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(
-                self.model_id, device_map="auto", token=token, cache_dir="$TMPDIR"
-            )
 
         self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_id, padding_side="left", token=token, cache_dir="$TMPDIR"
+            self.model_id, padding_side="left", token=token
+        )
+
+        task = "text-generation"
+
+        if self.model_name == "Aya":
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(
+                self.model_id, token=token
+            )
+            task = "text2text-generation"
+        else:
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_id, token=token
+            )
+        self.model = pipeline(
+            task,
+            model=self.model,
+            tokenizer=self.tokenizer,
+            device_map="auto",
         )
 
         self.terminators = [
-            self.tokenizer.eos_token_id,
-            self.tokenizer.convert_tokens_to_ids("<|eot_id|>"),
+            self.model.tokenizer.eos_token_id,
+            self.model.tokenizer.convert_tokens_to_ids("<|eot_id|>"),
         ]
 
-        self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.model.tokenizer.pad_token_id = self.model.model.config.eos_token_id
 
     def prepare_input(self, messages) -> list:
         """
         Function for tokenizing batched input, expects the following format:
 
         """
-        input_ids = []
 
-        input_ids = self.tokenizer.apply_chat_template(
-            messages, add_generation_prompt=True, return_tensors="pt", padding=True
-        ).to("cuda")
+        input_ids = self.model.tokenizer.apply_chat_template(
+            messages,
+            add_generation_prompt=True,
+            tokenize=False,
+        )
 
         return input_ids
 
@@ -72,23 +85,36 @@ class Model:
         """
         Generate the outputs for a certain input_ids
         """
-        outputs = self.model.generate(
-            input_ids,
-            max_new_tokens=self.max_new_tokens,
-            eos_token_id=self.terminators,
-            pad_token_id=self.tokenizer.eos_token_id,
-            do_sample=False,  # this has to be false when temperature is 0 right?
-            # temperature=self.temperature,
-            num_return_sequences=self.sequences_amount,
-        )
+        if self.model_name == "Aya":
+            outputs = []
+            for output in tqdm(
+                self.model(
+                    input_ids,
+                    batch_size=self.batch_size,
+                    max_new_tokens=self.max_new_tokens,
+                    do_sample=False,
+                    num_beams=1,
+                    eos_token_id=self.terminators,
+                ),
+                total=len(input_ids),
+            ):
+                outputs.append(self.model.tokenizer.decode(output[0]))
 
-        results = []
-        for item in outputs:
-            results.append(
-                self.tokenizer.decode(
-                    item if self.model_name == "Aya" else item[input_ids.shape[-1] :],
-                    skip_special_tokens=True,
-                )
-            )
+            return outputs
 
-        return results
+        outputs = []
+        for output in tqdm(
+            self.model(
+                input_ids,
+                batch_size=self.batch_size,
+                max_new_tokens=self.max_new_tokens,
+                do_sample=False,
+                num_beams=1,
+                return_full_text=False,
+                eos_token_id=self.terminators,
+            ),
+            total=len(input_ids),
+        ):
+            outputs.append(output[0]["generated_text"])
+
+        return outputs

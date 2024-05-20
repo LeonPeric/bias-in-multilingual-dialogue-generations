@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #SBATCH --partition=gpu_mig
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:2
 #SBATCH --cpus-per-task=18
-#SBATCH --gpus=1
+#SBATCH --gpus=2
 #SBATCH --job-name=runATCS
 #SBATCH --ntasks=1
 #SBATCH --time=35:59:00
-#SBATCH --mem=32000M
+#SBATCH --mem=64000M
 #SBATCH --output=slurm_output_%A.out
 
 module purge
@@ -24,6 +24,7 @@ max_new_tokens=512
 temperature=0.0
 sequences_amount=1
 batch_size=1
+language="English"
 
 python run.py \
     --model_name $model_name\
@@ -31,5 +32,6 @@ python run.py \
     --temperature $temperature\
     --sequences_amount $sequences_amount\
     --batch_size $batch_size\
+    --language $language\
 
 
