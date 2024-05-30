@@ -55,7 +55,9 @@ This folder stores the output of 3 LLM models for 4 languges. The results are st
 
 ### 'annotations' folder
 
-This folder stores the annotated output from Llama model in the formate of "id, model_id, template, output", as a preparation for the perspective analysis:
+This folder stores the annotated output from Llama model in the formate of "id, model_id, template, output", as a preparation for the perspective analysis.
+The files are named with the naming format: 'annotations_[Language].csv'
+For example, we display the first 2 rows of the annotations for English:
 
 | id   |     model_id      |  template_id | template | output|
 |----------|:-------------:|------:|------:|------:|
