@@ -24,7 +24,10 @@ conda env create -f dl2023_gpu.yml
 
 'main.ipynb' - contains the code to call and run the models, it is suitable if the local machine has GPU. Otherwise, use 'main.job' file to generate the dialogues.
 
-'main.job' - execure this file to run 'run.py' with GPU
+'main.job' - execure this file to run 'run.py' with GPU. Enter the following command to run the code:
+```
+sbatch main.job
+```
 
 ## Data & analysis
 
