@@ -66,9 +66,9 @@ For example, we display the first 2 rows of the annotations for English:
 | ... | "LLama" |...|...|...|
 
 
-### 'LLM_Classification' folder
+### 'classification' folder
 
-This folder contains two subfolders, each containing the analysis results for i) general vs specific or ii) tone classification.
+This folder contains three subfolders, containing the automatic analysis results for i) general vs specific or ii) tone classification as well as the forms and results for the manual annotation.
 
 #### General vs Specific
 Contains an analysis.ipynb jupyter file, which contains the code necessary for obtaining the results which are documented in the report.
