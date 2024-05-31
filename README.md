@@ -68,4 +68,14 @@ For example, we display the first 2 rows of the annotations for English:
 
 ### 'LLM_Classification' folder
 
-This folder contains the analysis results for general and specific 
+This folder contains two subfolders, each containing the analysis results for i) general vs specific or ii) tone classification.
+
+#### General vs Specific
+Contains an analysis.ipynb jupyter file, which contains the code necessary for obtaining the results which are documented in the report.
+
+Contains testing.ipynb, a jupyter file which can be run to obtain the results of the .pkl files
+
+#### General vs Specific
+Contains an analysis.ipynb jupyter file, which contains the code necessary for obtaining the results which are documented in the report.
+
+Contains testing.ipynb, a jupyter file which can be run to obtain the results of the .pkl files
