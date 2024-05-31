@@ -75,7 +75,17 @@ Contains an analysis.ipynb jupyter file, which contains the code necessary for o
 
 Contains testing.ipynb, a jupyter file which can be run to obtain the results of the .pkl files
 
-#### General vs Specific
-Contains an analysis.ipynb jupyter file, which contains the code necessary for obtaining the results which are documented in the report.
+#### Tone Classification
+Contains analysis_full.ipynb, a jupyter file which contains the code necessary for obtaining the results which are documented in the report. There is also additional analyses in here which were eventually not included in the final product, such as the Friedman test
 
-Contains testing.ipynb, a jupyter file which can be run to obtain the results of the .pkl files
+Contains analysis_report.ipynb, a jupyter file which can be run to obtain the 2x3 layout of the tone classification. Was later used to obtain the Tone classification for individual models seen in the appendix.
+
+The analysis_{model}.ipynb are copies of an older version of analysis_full. They allowed one to look into the results of only a single model (unlike full which concatenated all the outputs of all the models).
+
+classification_{model}.csv are files which we tried to update; however, something went wrong and as such we went back to using the original csv files. These are the files named classification_{model}_original.csv, and are also the ones which are used for the final report.
+
+Our topic_labeling.py file can be run to obtain the results of the .pkl files
+
+The remaining files are 'pkl' files, which were already mentioned earlier because they store the results provided by the code in the 'template.ipynb' file.
+
+The folder "Outputs of analysis" contains the images which show the distribution for each modek across the tones.
