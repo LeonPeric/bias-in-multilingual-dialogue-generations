@@ -68,4 +68,4 @@ For example, we display the first 2 rows of the annotations for English:
 
 ### 'LLM_Classification' folder
 
-This folder contains the analtysing results for general and specific 
+This folder contains the analysis results for general and specific 
