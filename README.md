@@ -13,6 +13,8 @@ Enter the following command to install the python environment:
 conda env create -f dl2023_gpu.yml
 ```
 
+## Task Division
+In order to show our task divisons, we have created the file TaskList.csv which lists a series of actions we have completed and the names of those who partook in completing them.
 
 
 ## File Structure  
