@@ -1,0 +1,27 @@
+Task,Name
+Decide research questions,All
+Select target groups and create templates,"Fien, Emma, David"
+Choose models model downloading and setting-up,"Leon, Chang"
+Translate description words,All
+Related work research,All
+Create prompts,"Emma, Fien, David"
+Check generated output,All
+Evaluation code,Leon
+Manual evaluation forms and analysis,David
+Evaluation analysis: Specific vs General,David
+Evaluation analysis: Tone Classification,"Emma, David"
+Create poster,"Fien, Chang, David"
+Create poster images (tone and perspective),"Emma, Leon"
+Machine translation of holistic bias dataset (ended up not using this),David
+Code for Friedman (ended up not using this),Emma
+Create README.md,Chang
+Create Task Divison,"Chang, Emma, David"
+Submit assignment,Emma
+Report:,
+Introduction,"David, Fien"
+Related work,David
+Methods / Experiments,"David, Fien"
+"Results & Analysis: Tone, Perspective, Specific vs General, Manual vs automated","Emma, Leon, David"
+Conclusion,"Fien, Emma, David, Leon"
+Appendix,"Emma, Leon, David, Chang"
+Proof read,"Emma, David, Fien"
